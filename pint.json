@@ -1,0 +1,9 @@
+{
+    "preset": "laravel",
+    "rules": {
+        "declare_strict_types": true,
+        "assign_null_coalescing_to_coalesce_equal": true,
+        "modernize_strpos": true,
+        "new_with_parentheses": true
+    }
+}

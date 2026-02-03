@@ -1,0 +1,51 @@
+{
+    "name": "playercentral/laravel-mqtt-broker",
+    "description": "MQTT broadcasting driver for Laravel",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Karoly Nemethy",
+            "email": "karoly.nemethy@playercentral.fit"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "PlayerCentral\\MqttBroker\\": "src/"
+        }
+    },
+    "require-dev": {
+        "orchestra/testbench": "^10.9",
+        "pestphp/pest": "^4.3",
+        "laravel/pint": "^1.27",
+        "pestphp/pest-plugin-laravel": "^4.0",
+        "larastan/larastan": "^3.9"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Workbench\\App\\": "workbench/app/",
+            "Workbench\\Database\\Factories\\": "workbench/database/factories/",
+            "Workbench\\Database\\Seeders\\": "workbench/database/seeders/",
+            "PayerCentral\\MqttBroker\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "@clear",
+            "@prepare"
+        ],
+        "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
+        "prepare": "@php vendor/bin/testbench package:discover --ansi",
+        "build": "@php vendor/bin/testbench workbench:build --ansi",
+        "serve": [
+            "Composer\\Config::disableProcessTimeout",
+            "@build",
+            "@php vendor/bin/testbench serve --ansi"
+        ]
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
+}
