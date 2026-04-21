@@ -4,8 +4,10 @@ services:
     container_name: mqtt-broker
     ports:
       - "1883:1883"
+      - "8883:8883"
     volumes:
       - ./.docker/mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ./.docker/mosquitto/certs:/mosquitto/certs
       - ./.docker/mosquitto/data:/mosquitto/data
       - ./.docker/mosquitto/log:/mosquitto/log
     restart: unless-stopped

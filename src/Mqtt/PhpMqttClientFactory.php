@@ -23,12 +23,14 @@ class PhpMqttClientFactory implements MqttClientFactoryInterface
         $password = Arr::get($config, 'password');
         $timeout = (int) Arr::get($config, 'options.timeout', 10);
         $keepAlive = (int) Arr::get($config, 'options.keep_alive', 60);
+        $tlsConfig = (array) Arr::get($config, 'options.tls', []);
 
         $connectionSettings = $this->makeConnectionSettings(
             $username,
             $password,
             $timeout,
-            $keepAlive
+            $keepAlive,
+            $tlsConfig
         );
 
         return new PhpMqttClientAdapter(
@@ -46,12 +48,30 @@ class PhpMqttClientFactory implements MqttClientFactoryInterface
         mixed $username,
         mixed $password,
         int $timeout,
-        int $keepAlive
+        int $keepAlive,
+        array $tlsConfig = []
     ): ConnectionSettings {
-        return (new ConnectionSettings())
+        $settings = (new ConnectionSettings())
             ->setUsername($username)
             ->setPassword($password)
             ->setConnectTimeout($timeout)
             ->setKeepAliveInterval($keepAlive);
+
+        if (Arr::get($tlsConfig, 'enabled', false)) {
+            if ($certificate = Arr::get($tlsConfig, 'certificate')) {
+                $settings->setTlsClientCertificateFile((string) $certificate);
+            }
+            if ($key = Arr::get($tlsConfig, 'key')) {
+                $settings->setTlsClientCertificateKeyFile((string) $key);
+            }
+            if ($caCertificate = Arr::get($tlsConfig, 'ca_certificate')) {
+                $settings->setTlsCertificateAuthorityFile((string) $caCertificate);
+            }
+            $settings->setTlsVerifyPeer((bool) Arr::get($tlsConfig, 'verify_peer', true));
+            $settings->setTlsVerifyPeerName((bool) Arr::get($tlsConfig, 'verify_peer_name', true));
+            $settings->setTlsSelfSignedAllowed((bool) Arr::get($tlsConfig, 'self_signed_allowed', false));
+        }
+
+        return $settings;
     }
 }

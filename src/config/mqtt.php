@@ -26,5 +26,14 @@ return [
         'qos' => (int) env('MQTT_QOS', 0), // 0, 1, or 2
         'clean_session' => (bool) env('MQTT_CLEAN_SESSION', true),
         'retain' => (bool) env('MQTT_RETAIN', false),
+        'tls' => [
+            'enabled' => (bool) env('MQTT_TLS_ENABLED', false),
+            'certificate' => env('MQTT_TLS_CERTIFICATE'),
+            'key' => env('MQTT_TLS_KEY'),
+            'ca_certificate' => env('MQTT_TLS_CA_CERTIFICATE'),
+            'verify_peer' => (bool) env('MQTT_TLS_VERIFY_PEER', true),
+            'verify_peer_name' => (bool) env('MQTT_TLS_VERIFY_PEER_NAME', true),
+            'self_signed_allowed' => (bool) env('MQTT_TLS_SELF_SIGNED_ALLOWED', false),
+        ],
     ],
 ];

@@ -19,4 +19,5 @@ yarn-error.log
 /workbench/**
 .docker/mosquitto/data/
 .docker/mosquitto/log
+.docker/mosquitto/certs/
 /workbench

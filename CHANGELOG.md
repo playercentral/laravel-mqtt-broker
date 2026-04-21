@@ -22,6 +22,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `MqttClientFactoryInterface`,
   - `PhpMqttClientAdapter`,
   - `PhpMqttClientFactory`.
+- TLS/SSL support:
+  - Client certificate authentication,
+  - CA certificate verification,
+  - Configurable peer verification and self-signed certificate support.
 - Install command `mqtt:install`:
   - publishes package config,
   - appends MQTT `.env` defaults,
@@ -49,4 +53,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Known Limitations
 
 - Private and presence channel authentication is currently not supported.
-- TLS-specific MQTT connection options are not yet implemented.

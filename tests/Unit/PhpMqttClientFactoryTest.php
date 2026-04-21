@@ -37,14 +37,15 @@ it('maps config values into client and connection settings', function () {
             mixed $username,
             mixed $password,
             int $timeout,
-            int $keepAlive
+            int $keepAlive,
+            array $tlsConfig = []
         ): ConnectionSettings {
             $this->capturedUsername = $username;
             $this->capturedPassword = $password;
             $this->capturedTimeout = $timeout;
             $this->capturedKeepAlive = $keepAlive;
 
-            return parent::makeConnectionSettings($username, $password, $timeout, $keepAlive);
+            return parent::makeConnectionSettings($username, $password, $timeout, $keepAlive, $tlsConfig);
         }
     };
 
@@ -68,4 +69,165 @@ it('maps config values into client and connection settings', function () {
     expect($factory->capturedPassword)->toBe('mqtt-pass');
     expect($factory->capturedTimeout)->toBe(15);
     expect($factory->capturedKeepAlive)->toBe(45);
+});
+
+it('applies tls configuration when enabled', function () {
+    $factory = new class() extends PhpMqttClientFactory
+    {
+        public mixed $capturedTlsEnabled = null;
+
+        public mixed $capturedTlsCertificate = null;
+
+        public mixed $capturedTlsKey = null;
+
+        public mixed $capturedTlsCaCertificate = null;
+
+        public mixed $capturedTlsVerifyPeer = null;
+
+        public mixed $capturedTlsVerifyPeerName = null;
+
+        public mixed $capturedTlsSelfSignedAllowed = null;
+
+        protected function makeClient(string $host, int $port, string $clientId): MqttClient
+        {
+            return new MqttClient('127.0.0.1', 1883, 'test-client');
+        }
+
+        protected function makeConnectionSettings(
+            mixed $username,
+            mixed $password,
+            int $timeout,
+            int $keepAlive,
+            array $tlsConfig = []
+        ): ConnectionSettings {
+            $this->capturedTlsEnabled = $tlsConfig['enabled'] ?? false;
+            $this->capturedTlsCertificate = $tlsConfig['certificate'] ?? null;
+            $this->capturedTlsKey = $tlsConfig['key'] ?? null;
+            $this->capturedTlsCaCertificate = $tlsConfig['ca_certificate'] ?? null;
+            $this->capturedTlsVerifyPeer = $tlsConfig['verify_peer'] ?? true;
+            $this->capturedTlsVerifyPeerName = $tlsConfig['verify_peer_name'] ?? true;
+            $this->capturedTlsSelfSignedAllowed = $tlsConfig['self_signed_allowed'] ?? false;
+
+            return parent::makeConnectionSettings($username, $password, $timeout, $keepAlive, $tlsConfig);
+        }
+    };
+
+    $factory->make([
+        'host' => 'mqtt.example.com',
+        'port' => 8883,
+        'client_id' => 'secure-app',
+        'username' => 'mqtt-user',
+        'password' => 'mqtt-pass',
+        'options' => [
+            'timeout' => 10,
+            'keep_alive' => 60,
+            'tls' => [
+                'enabled' => true,
+                'certificate' => '/path/to/client.crt',
+                'key' => '/path/to/client.key',
+                'ca_certificate' => '/path/to/ca.crt',
+                'verify_peer' => true,
+                'verify_peer_name' => true,
+                'self_signed_allowed' => false,
+            ],
+        ],
+    ]);
+
+    expect($factory->capturedTlsEnabled)->toBeTrue();
+    expect($factory->capturedTlsCertificate)->toBe('/path/to/client.crt');
+    expect($factory->capturedTlsKey)->toBe('/path/to/client.key');
+    expect($factory->capturedTlsCaCertificate)->toBe('/path/to/ca.crt');
+    expect($factory->capturedTlsVerifyPeer)->toBeTrue();
+    expect($factory->capturedTlsVerifyPeerName)->toBeTrue();
+    expect($factory->capturedTlsSelfSignedAllowed)->toBeFalse();
+});
+
+it('applies default tls settings when disabled', function () {
+    $factory = new class() extends PhpMqttClientFactory
+    {
+        public mixed $capturedTlsEnabled = null;
+
+        public mixed $capturedTlsVerifyPeer = null;
+
+        public mixed $capturedTlsSelfSignedAllowed = null;
+
+        protected function makeClient(string $host, int $port, string $clientId): MqttClient
+        {
+            return new MqttClient('127.0.0.1', 1883, 'test-client');
+        }
+
+        protected function makeConnectionSettings(
+            mixed $username,
+            mixed $password,
+            int $timeout,
+            int $keepAlive,
+            array $tlsConfig = []
+        ): ConnectionSettings {
+            $this->capturedTlsEnabled = $tlsConfig['enabled'] ?? false;
+            $this->capturedTlsVerifyPeer = $tlsConfig['verify_peer'] ?? true;
+            $this->capturedTlsSelfSignedAllowed = $tlsConfig['self_signed_allowed'] ?? false;
+
+            return parent::makeConnectionSettings($username, $password, $timeout, $keepAlive, $tlsConfig);
+        }
+    };
+
+    $factory->make([
+        'host' => 'mqtt.example.com',
+        'port' => 1883,
+        'client_id' => 'app',
+        'username' => null,
+        'password' => null,
+        'options' => [
+            'timeout' => 10,
+            'keep_alive' => 60,
+        ],
+    ]);
+
+    expect($factory->capturedTlsEnabled)->toBeFalse();
+    expect($factory->capturedTlsVerifyPeer)->toBeTrue();
+    expect($factory->capturedTlsSelfSignedAllowed)->toBeFalse();
+});
+
+it('supports self-signed certificates with verification disabled', function () {
+    $factory = new class() extends PhpMqttClientFactory
+    {
+        public mixed $capturedTlsSelfSignedAllowed = null;
+
+        public mixed $capturedTlsVerifyPeer = null;
+
+        protected function makeClient(string $host, int $port, string $clientId): MqttClient
+        {
+            return new MqttClient('127.0.0.1', 1883, 'test-client');
+        }
+
+        protected function makeConnectionSettings(
+            mixed $username,
+            mixed $password,
+            int $timeout,
+            int $keepAlive,
+            array $tlsConfig = []
+        ): ConnectionSettings {
+            $this->capturedTlsSelfSignedAllowed = $tlsConfig['self_signed_allowed'] ?? false;
+            $this->capturedTlsVerifyPeer = $tlsConfig['verify_peer'] ?? true;
+
+            return parent::makeConnectionSettings($username, $password, $timeout, $keepAlive, $tlsConfig);
+        }
+    };
+
+    $factory->make([
+        'host' => 'mqtt.example.com',
+        'port' => 8883,
+        'client_id' => 'app',
+        'options' => [
+            'tls' => [
+                'enabled' => true,
+                'ca_certificate' => '/path/to/self-signed.crt',
+                'verify_peer' => false,
+                'self_signed_allowed' => true,
+            ],
+        ],
+    ]);
+
+    expect($factory->capturedTlsSelfSignedAllowed)->toBeTrue();
+    expect($factory->capturedTlsVerifyPeer)->toBeFalse();
 });

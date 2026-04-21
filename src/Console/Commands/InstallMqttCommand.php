@@ -54,7 +54,15 @@ class InstallMqttCommand extends Command
                 "MQTT_USERNAME=\n".
                 "MQTT_PASSWORD=\n".
                 "MQTT_QOS=0\n".
-                "MQTT_RETAIN=false\n";
+                "MQTT_RETAIN=false\n".
+                "\n# MQTT TLS Configuration\n".
+                "MQTT_TLS_ENABLED=false\n".
+                "MQTT_TLS_CERTIFICATE=\n".
+                "MQTT_TLS_KEY=\n".
+                "MQTT_TLS_CA_CERTIFICATE=\n".
+                "MQTT_TLS_VERIFY_PEER=true\n".
+                "MQTT_TLS_VERIFY_PEER_NAME=true\n".
+                "MQTT_TLS_SELF_SIGNED_ALLOWED=false\n";
 
         File::append($envPath, $stub);
         $this->components->task('Updating .env file with MQTT variables');
