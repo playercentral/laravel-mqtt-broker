@@ -1,0 +1,11 @@
+parameters:
+    level: 5    
+    paths:
+        - src    
+    excludePaths:
+        - vendor
+        - workbench
+        - tests    
+    parallel:
+        processTimeout: 900.0
+    treatPhpDocTypesAsCertain: false

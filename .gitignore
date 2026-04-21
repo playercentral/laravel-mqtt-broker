@@ -16,4 +16,7 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
-/workbench/database/database.sqlite
+/workbench/**
+.docker/mosquitto/data/
+.docker/mosquitto/log
+/workbench
