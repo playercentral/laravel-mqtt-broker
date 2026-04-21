@@ -1,78 +1,78 @@
 {
-    "name": "playercentral/laravel-mqtt-broker",
-    "description": "MQTT broadcasting driver for Laravel",
-    "type": "library",
-    "license": "MIT",
-    "keywords": [
-        "laravel",
-        "mqtt",
-        "broadcasting",
-        "websockets",
-        "playercentral"
-    ],
-    "homepage": "https://github.com/playercentral/laravel-mqtt-broker",
-    "authors": [
-        {
-            "name": "Karoly Nemethy",
-            "email": "karoly.nemethy@playercentral.fit"
-        }
-    ],
-    "require": {
-        "php": "^8.2",
-        "illuminate/broadcasting": "^12.0",
-        "illuminate/support": "^12.0",
-        "php-mqtt/client": "^2.3"
-    },
-    "autoload": {
-        "psr-4": {
-            "PlayerCentral\\MqttBroker\\": "src/"
-        }
-    },
-    "require-dev": {
-        "orchestra/testbench": "^10.9",
-        "pestphp/pest": "^4.3",
-        "laravel/pint": "^1.27",
-        "pestphp/pest-plugin-laravel": "^4.0",
-        "larastan/larastan": "^3.9"
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Workbench\\App\\": "workbench/app/",
-            "Workbench\\Database\\Factories\\": "workbench/database/factories/",
-            "Workbench\\Database\\Seeders\\": "workbench/database/seeders/",
-            "PlayerCentral\\MqttBroker\\Tests\\": "tests/"
-        }
-    },
-    "scripts": {
-        "post-autoload-dump": [
-            "@clear",
-            "@prepare"
-        ],
-        "cs:fix": "vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php --verbose",
-        "cs:check": "vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php --dry-run --diff --verbose",
-        "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
-        "prepare": "@php vendor/bin/testbench package:discover --ansi",
-        "build": "@php vendor/bin/testbench workbench:build --ansi",
-        "serve": [
-            "Composer\\Config::disableProcessTimeout",
-            "@build",
-            "@php vendor/bin/testbench serve --ansi"
-        ]
-    },
-    "config": {
-        "allow-plugins": {
-            "pestphp/pest-plugin": true
-        }
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "PlayerCentral\\MqttBroker\\MqttServiceProvider"
-            ]
-        }
-    },
-    "support": {
-        "issues": "https://github.com/playercentral/laravel-mqtt-broker/issues",
-        "source": "https://github.com/playercentral/laravel-mqtt-broker"
+  "name": "playercentral/laravel-mqtt-broker",
+  "description": "MQTT broadcasting driver for Laravel",
+  "type": "library",
+  "license": "MIT",
+  "keywords": [
+    "laravel",
+    "mqtt",
+    "broadcasting",
+    "websockets",
+    "playercentral"
+  ],
+  "homepage": "https://github.com/playercentral/laravel-mqtt-broker",
+  "authors": [
+    {
+      "name": "Karoly Nemethy",
+      "email": "karoly.nemethy@playercentral.fit"
     }
+  ],
+  "require": {
+    "php": "^8.2",
+    "illuminate/broadcasting": "^10.0 || ^11.0 || ^12.0 || ^13.0",
+    "illuminate/support": "^10.0 || ^11.0 || ^12.0 || ^13.0",
+    "php-mqtt/client": "^2.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "PlayerCentral\\MqttBroker\\": "src/"
+    }
+  },
+  "require-dev": {
+    "orchestra/testbench": "^10.9",
+    "pestphp/pest": "^4.3",
+    "laravel/pint": "^1.27",
+    "pestphp/pest-plugin-laravel": "^4.0",
+    "larastan/larastan": "^3.9"
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Workbench\\App\\": "workbench/app/",
+      "Workbench\\Database\\Factories\\": "workbench/database/factories/",
+      "Workbench\\Database\\Seeders\\": "workbench/database/seeders/",
+      "PlayerCentral\\MqttBroker\\Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "post-autoload-dump": [
+      "@clear",
+      "@prepare"
+    ],
+    "cs:fix": "vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php --verbose",
+    "cs:check": "vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php --dry-run --diff --verbose",
+    "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
+    "prepare": "@php vendor/bin/testbench package:discover --ansi",
+    "build": "@php vendor/bin/testbench workbench:build --ansi",
+    "serve": [
+      "Composer\\Config::disableProcessTimeout",
+      "@build",
+      "@php vendor/bin/testbench serve --ansi"
+    ]
+  },
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "PlayerCentral\\MqttBroker\\MqttServiceProvider"
+      ]
+    }
+  },
+  "support": {
+    "issues": "https://github.com/playercentral/laravel-mqtt-broker/issues",
+    "source": "https://github.com/playercentral/laravel-mqtt-broker"
+  }
 }
