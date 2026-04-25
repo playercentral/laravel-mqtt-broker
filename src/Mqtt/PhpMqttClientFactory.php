@@ -21,6 +21,10 @@ class PhpMqttClientFactory implements MqttClientFactoryInterface
         $clientId = (string) Arr::get($config, 'client_id', $defaultId);
         $username = Arr::get($config, 'username');
         $password = Arr::get($config, 'password');
+        
+        // Convert empty strings to null to avoid php-mqtt validation issues
+        $username = $username === '' ? null : $username;
+        $password = $password === '' ? null : $password;
         $timeout = (int) Arr::get($config, 'options.timeout', 10);
         $keepAlive = (int) Arr::get($config, 'options.keep_alive', 60);
         $tlsConfig = (array) Arr::get($config, 'options.tls', []);

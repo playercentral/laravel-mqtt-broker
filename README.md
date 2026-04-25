@@ -121,6 +121,38 @@ return [
 
 The installer also appends MQTT variables to `.env` and adds a default `mqtt` connection block to `config/broadcasting.php` if missing.
 
+## Usage
+
+### Broadcasting Events
+
+Use Laravel's standard broadcasting system with the MQTT driver:
+
+```php
+// Via Broadcast facade
+Broadcast::channel('my-channel')->broadcast(new MyEvent($data));
+
+// Via Mqtt facade (direct access)
+use PlayerCentral\MqttBroker\Facades\Mqtt;
+
+Mqtt::broadcast(['my-channel'], 'user.created', [
+    'user_id' => 123,
+    'name' => 'John Doe'
+]);
+```
+
+### Configuration
+
+Set your broadcast driver in `.env`:
+
+```env
+BROADCAST_DRIVER=mqtt
+MQTT_HOST=127.0.0.1
+MQTT_PORT=1883
+MQTT_USERNAME=your_username
+MQTT_PASSWORD=your_password
+MQTT_TOPIC_PREFIX=laravel/events
+```
+
 ## Broadcasting Connection
 
 Ensure `config/broadcasting.php` includes:

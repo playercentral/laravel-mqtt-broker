@@ -16,8 +16,8 @@ return [
     'host' => env('MQTT_HOST', '127.0.0.1'),
     'port' => (int) env('MQTT_PORT', 1883),
     'client_id' => env('MQTT_CLIENT_ID', 'laravel-mqtt-broker'),
-    'username' => env('MQTT_USERNAME'),
-    'password' => env('MQTT_PASSWORD'),
+    'username' => env('MQTT_USERNAME') ?: null,
+    'password' => env('MQTT_PASSWORD') ?: null,
     'topic_prefix' => env('MQTT_TOPIC_PREFIX', 'laravel/events'),
 
     'options' => [

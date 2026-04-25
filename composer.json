@@ -68,7 +68,10 @@
     "laravel": {
       "providers": [
         "PlayerCentral\\MqttBroker\\MqttServiceProvider"
-      ]
+      ],
+      "aliases": {
+        "Mqtt": "PlayerCentral\\MqttBroker\\Facades\\Mqtt"
+      }
     }
   },
   "support": {
