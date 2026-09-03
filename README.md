@@ -4,7 +4,7 @@ MQTT broadcasting driver for Laravel.
 
 This package adds an `mqtt` broadcasting connection so Laravel events can be published to MQTT topics.
 
-> **Note:** This is version 0.1.0 - an initial release focused on public channel broadcasting. See [Known Limitations](#known-limitations) for current restrictions.
+> **Note:** Public and private channel broadcasting are supported. Presence channels are not yet supported — see [Known Limitations](#known-limitations).
 
 ## Features
 

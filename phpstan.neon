@@ -4,8 +4,8 @@ parameters:
         - src    
     excludePaths:
         - vendor
-        - workbench
-        - tests    
+        - workbench (?)
+        - tests
     parallel:
         processTimeout: 900.0
     treatPhpDocTypesAsCertain: false
