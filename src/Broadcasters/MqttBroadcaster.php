@@ -7,8 +7,10 @@ namespace PlayerCentral\MqttBroker\Broadcasters;
 use Illuminate\Broadcasting\Broadcasters\Broadcaster;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use PlayerCentral\MqttBroker\Auth\MqttAuth;
 use PlayerCentral\MqttBroker\Contracts\MqttClientFactoryInterface;
 use RuntimeException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Throwable;
 
 class MqttBroadcaster extends Broadcaster
@@ -67,17 +69,55 @@ class MqttBroadcaster extends Broadcaster
             throw new RuntimeException('Invalid authentication request for MQTT broadcaster.');
         }
 
-        $channelName = (string) $request->input('channel_name', '');
-        if (str_starts_with($channelName, 'private-') || str_starts_with($channelName, 'presence-')) {
-            throw new RuntimeException('Private and presence channels are not currently supported by the MQTT broadcaster.');
+        $rawChannelName = (string) $request->input('channel_name', '');
+
+        if (str_starts_with($rawChannelName, 'presence-')) {
+            throw new RuntimeException('Presence channels are not currently supported by the MQTT broadcaster.');
         }
 
-        return true;
+        if (! $this->isGuardedChannel($rawChannelName)) {
+            return ['authenticated' => true];
+        }
+
+        $channelName = $this->normalizeChannelName($rawChannelName);
+
+        if ($rawChannelName === '' || ! $this->retrieveUser($request, $channelName)) {
+            throw new AccessDeniedHttpException();
+        }
+
+        return parent::verifyUserCanAccessChannel($request, $channelName);
     }
 
     public function validAuthenticationResponse($request, $result)
     {
-        return ['authenticated' => (bool) $result];
+        $rawChannelName = (string) $request->input('channel_name', '');
+        $socketId = (string) $request->input('socket_id', '');
+        $key = (string) Arr::get($this->config, 'key', config('app.key', ''));
+
+        $signature = MqttAuth::generateSignature($socketId, $rawChannelName, $key);
+
+        return [
+            'auth' => $signature,
+            'channel' => $rawChannelName,
+        ];
+    }
+
+    protected function normalizeChannelName(string $channel): string
+    {
+        if (str_starts_with($channel, 'private-')) {
+            return substr($channel, 8);
+        }
+
+        if (str_starts_with($channel, 'presence-')) {
+            return substr($channel, 9);
+        }
+
+        return $channel;
+    }
+
+    protected function isGuardedChannel(string $channel): bool
+    {
+        return str_starts_with($channel, 'private-') || str_starts_with($channel, 'presence-');
     }
 
     private function toBool(mixed $value, bool $default): bool

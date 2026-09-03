@@ -5,6 +5,7 @@ services:
     ports:
       - "1883:1883"
       - "8883:8883"
+      - "9001:9001"
     volumes:
       - ./.docker/mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
       - ./.docker/mosquitto/certs:/mosquitto/certs

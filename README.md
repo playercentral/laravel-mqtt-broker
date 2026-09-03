@@ -50,7 +50,10 @@ To run a local MQTT broker with Docker for testing:
 docker-compose up -d
 ```
 
-The broker will be accessible at `localhost:1883`.
+The broker will be accessible at:
+- `localhost:1883` - TCP for Laravel backend
+- `localhost:9001` - WebSockets for Web & Capacitor clients
+- `localhost:8883` - TLS (when enabled)
 
 ### TLS Testing (Optional)
 
@@ -217,6 +220,30 @@ MQTT_TLS_SELF_SIGNED_ALLOWED=false            # Allow self-signed certificates
 ```
 
 **Note:** When using TLS, ensure your MQTT broker is configured to listen on the TLS port (typically 8883).
+
+## Frontend & Mobile Integration (Laravel Echo)
+
+To consume events published by this driver on the frontend (Web, Vue, Nuxt, React) or mobile (Capacitor), use the companion package [`@playercentral/mqtt-echo-connector`](https://github.com/playercentral/mqtt-echo-connector):
+
+```bash
+npm install @playercentral/mqtt-echo-connector laravel-echo mqtt
+```
+
+```javascript
+import Echo from 'laravel-echo';
+import { MqttConnector } from '@playercentral/mqtt-echo-connector';
+
+window.Echo = new Echo({
+    broadcaster: MqttConnector,
+    host: 'ws://localhost:9001', // or wss:// in production
+    topicPrefix: 'laravel/events',
+});
+
+Echo.channel('matches.1')
+    .listen('.ScoreUpdated', (event) => {
+        console.log('Real-time event received:', event);
+    });
+```
 
 ## Behavior Notes
 

@@ -6,18 +6,48 @@ use Illuminate\Http\Request;
 use PlayerCentral\MqttBroker\Broadcasters\MqttBroadcaster;
 use PlayerCentral\MqttBroker\Tests\Fakes\FakeMqttClient;
 use PlayerCentral\MqttBroker\Tests\Fakes\FakeMqttClientFactory;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
-it('rejects private and presence channel auth requests', function () {
+it('authenticates public channels and rejects presence channels', function () {
+    $broadcaster = new MqttBroadcaster([], new FakeMqttClientFactory(new FakeMqttClient()));
+
+    $publicRequest = Request::create('/broadcasting/auth', 'POST', ['channel_name' => 'orders.1']);
+    $presenceRequest = Request::create('/broadcasting/auth', 'POST', ['channel_name' => 'presence-team.1']);
+
+    expect($broadcaster->auth($publicRequest))->toBe(['authenticated' => true]);
+
+    expect(fn () => $broadcaster->auth($presenceRequest))
+        ->toThrow(RuntimeException::class, 'Presence channels are not currently supported');
+});
+
+it('denies unauthenticated private channel access', function () {
     $broadcaster = new MqttBroadcaster([], new FakeMqttClientFactory(new FakeMqttClient()));
 
     $privateRequest = Request::create('/broadcasting/auth', 'POST', ['channel_name' => 'private-orders.1']);
-    $presenceRequest = Request::create('/broadcasting/auth', 'POST', ['channel_name' => 'presence-team.1']);
 
     expect(fn () => $broadcaster->auth($privateRequest))
-        ->toThrow(RuntimeException::class, 'Private and presence channels are not currently supported');
+        ->toThrow(AccessDeniedHttpException::class);
+});
 
-    expect(fn () => $broadcaster->auth($presenceRequest))
-        ->toThrow(RuntimeException::class, 'Private and presence channels are not currently supported');
+it('authorizes authenticated private channel requests with signature', function () {
+    $broadcaster = new MqttBroadcaster(['key' => 'secret-test-key'], new FakeMqttClientFactory(new FakeMqttClient()));
+
+    $broadcaster->channel('orders.{id}', function ($user, $id) {
+        return (int) $id === 42;
+    });
+
+    $user = (object) ['id' => 1];
+    $request = Request::create('/broadcasting/auth', 'POST', [
+        'channel_name' => 'private-orders.42',
+        'socket_id' => 'socket_123',
+    ]);
+    $request->setUserResolver(fn () => $user);
+
+    $response = $broadcaster->auth($request);
+
+    expect($response)->toHaveKeys(['auth', 'channel']);
+    expect($response['channel'])->toBe('private-orders.42');
+    expect($response['auth'])->toBe(hash_hmac('sha256', 'socket_123:private-orders.42', 'secret-test-key'));
 });
 
 it('publishes mqtt payloads with mapped topics', function () {

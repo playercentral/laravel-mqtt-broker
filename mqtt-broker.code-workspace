@@ -1,0 +1,18 @@
+{
+  "folders": [
+    {
+      "name": "Backend (Laravel MQTT Broker)",
+      "path": "."
+    },
+    {
+      "name": "Frontend (MQTT Echo Connector)",
+      "path": "../mqtt-echo-connector"
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/.git": true,
+      "**/.DS_Store": true
+    }
+  }
+}
