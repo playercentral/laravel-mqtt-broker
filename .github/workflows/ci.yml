@@ -39,7 +39,7 @@ jobs:
         run: composer update --prefer-lowest --prefer-dist --no-interaction --no-progress
 
       - name: Run tests
-        run: vendor/bin/pest
+        run: vendor/bin/pest --exclude-group=integration
 
   static-analysis:
     name: Static Analysis

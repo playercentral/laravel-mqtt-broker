@@ -88,38 +88,53 @@ MQTT_TLS_VERIFY_PEER=true
 
 ## Configuration
 
-The package config file is `config/mqtt.php`.
+The package seamlessly integrates into Laravel's standard broadcasting configuration. Default settings are registered automatically, and you can publish the configuration file:
 
-Example:
-
-```php
-return [
-    'host' => env('MQTT_HOST', '127.0.0.1'),
-    'port' => (int) env('MQTT_PORT', 1883),
-    'client_id' => env('MQTT_CLIENT_ID', 'laravel-mqtt-broker'),
-    'username' => env('MQTT_USERNAME'),
-    'password' => env('MQTT_PASSWORD'),
-    'topic_prefix' => env('MQTT_TOPIC_PREFIX', 'laravel/events'),
-    'options' => [
-        'timeout' => (int) env('MQTT_TIMEOUT', 10),
-        'keep_alive' => (int) env('MQTT_KEEP_ALIVE', 60),
-        'qos' => (int) env('MQTT_QOS', 0),
-        'clean_session' => (bool) env('MQTT_CLEAN_SESSION', true),
-        'retain' => (bool) env('MQTT_RETAIN', false),
-        'tls' => [
-            'enabled' => (bool) env('MQTT_TLS_ENABLED', false),
-            'certificate' => env('MQTT_TLS_CERTIFICATE'),  // Client certificate file path
-            'key' => env('MQTT_TLS_KEY'),                   // Client key file path
-            'ca_certificate' => env('MQTT_TLS_CA_CERTIFICATE'),  // CA certificate file path
-            'verify_peer' => (bool) env('MQTT_TLS_VERIFY_PEER', true),
-            'verify_peer_name' => (bool) env('MQTT_TLS_VERIFY_PEER_NAME', true),
-            'self_signed_allowed' => (bool) env('MQTT_TLS_SELF_SIGNED_ALLOWED', false),
-        ],
-    ],
-];
+```bash
+php artisan vendor:publish --tag=mqtt-config
 ```
 
-The installer also appends MQTT variables to `.env` and adds a default `mqtt` connection block to `config/broadcasting.php` if missing.
+This publishes or merges into `config/broadcasting.php`.
+
+Example connection in `config/broadcasting.php`:
+
+```php
+'connections' => [
+    'mqtt' => [
+        'driver' => 'mqtt',
+        'host' => env('MQTT_HOST', '127.0.0.1'),
+        'port' => (int) env('MQTT_PORT', 1883),
+        'client_id' => env('MQTT_CLIENT_ID', 'laravel-mqtt-broker'),
+        'username' => env('MQTT_USERNAME'),
+        'password' => env('MQTT_PASSWORD'),
+        'topic_prefix' => env('MQTT_TOPIC_PREFIX', 'laravel/events'),
+        'options' => [
+            'timeout' => (int) env('MQTT_TIMEOUT', 10),
+            'keep_alive' => (int) env('MQTT_KEEP_ALIVE', 60),
+            'qos' => (int) env('MQTT_QOS', 0),
+            'clean_session' => (bool) env('MQTT_CLEAN_SESSION', true),
+            'retain' => (bool) env('MQTT_RETAIN', false),
+            'tls' => [
+                'enabled' => (bool) env('MQTT_TLS_ENABLED', false),
+                'certificate' => env('MQTT_TLS_CERTIFICATE'),  // Client certificate file path
+                'key' => env('MQTT_TLS_KEY'),                   // Client key file path
+                'ca_certificate' => env('MQTT_TLS_CA_CERTIFICATE'),  // CA certificate file path
+                'verify_peer' => (bool) env('MQTT_TLS_VERIFY_PEER', true),
+                'verify_peer_name' => (bool) env('MQTT_TLS_VERIFY_PEER_NAME', true),
+                'self_signed_allowed' => (bool) env('MQTT_TLS_SELF_SIGNED_ALLOWED', false),
+            ],
+        ],
+    ],
+    // You can also define additional MQTT connections if needed:
+    // 'mqtt_secondary' => [
+    //     'driver' => 'mqtt',
+    //     'host' => env('MQTT_SECONDARY_HOST', '127.0.0.1'),
+    //     ...
+    // ],
+],
+```
+
+The installer (`php artisan mqtt:install`) also appends default MQTT environment variables to your `.env` and patches `config/broadcasting.php` if missing.
 
 ## Usage
 

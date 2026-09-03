@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace PlayerCentral\MqttBroker\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use PlayerCentral\MqttBroker\Broadcasters\MqttBroadcaster;
 
 /**
  * @method static void broadcast(array $channels, string $event, array $payload = [])

@@ -16,8 +16,7 @@ class MqttServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->publishes([
-            __DIR__ . '/config/mqtt.php' => config_path('mqtt.php'),
-            __DIR__ . '/config/broadcast.php' => config_path('broadcast.php'),
+            __DIR__.'/config/broadcasting.php' => config_path('broadcasting.php'),
         ], 'mqtt-config');
 
         $this->app->resolving(BroadcastManager::class, function (BroadcastManager $manager): void {
@@ -32,13 +31,19 @@ class MqttServiceProvider extends ServiceProvider
 
     public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__ . '/config/mqtt.php', 'mqtt');
-        $this->mergeConfigFrom(__DIR__ . '/config/broadcast.php', 'broadcast');
+        $packageConfig = require __DIR__.'/config/broadcasting.php';
+        $config = $this->app->make('config');
+        $config->set(
+            'broadcasting',
+            array_replace_recursive($packageConfig, $config->get('broadcasting', []))
+        );
+
         $this->app->singleton(MqttClientFactoryInterface::class, PhpMqttClientFactory::class);
-        
-        // Register the MQTT broadcaster instance
+
+        // Register the default MQTT broadcaster instance
         $this->app->singleton('mqtt.broadcaster', function ($app) {
-            $config = config('broadcast.connections.mqtt');
+            $config = (array) config('broadcasting.connections.mqtt', []);
+
             return new MqttBroadcaster(
                 $config,
                 $app->make(MqttClientFactoryInterface::class)

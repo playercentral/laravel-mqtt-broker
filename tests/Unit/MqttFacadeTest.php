@@ -10,9 +10,9 @@ it('provides a facade for mqtt broadcasting', function () {
     // Swap the factory with a fake one for testing
     $fakeClient = new FakeMqttClient();
     $fakeFactory = new FakeMqttClientFactory($fakeClient);
-    
+
     app()->instance('mqtt.broadcaster', new \PlayerCentral\MqttBroker\Broadcasters\MqttBroadcaster(
-        config('broadcast.connections.mqtt'),
+        (array) config('broadcasting.connections.mqtt', []),
         $fakeFactory
     ));
 

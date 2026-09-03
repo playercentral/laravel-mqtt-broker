@@ -9,8 +9,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | Here you may define all of the broadcast connections that will be used
-    | to broadcast events to other systems or over websockets. Samples of
-    | each available type of connection are provided inside this array.
+    | to broadcast events to other systems or over websockets.
     |
     */
 
@@ -40,6 +39,5 @@ return [
                 ],
             ],
         ],
-        'default' => env('BROADCAST_DRIVER', 'mqtt'),
     ],
 ];
