@@ -32,3 +32,24 @@ PHP);
     expect(substr_count($configContent, "'mqtt' => ["))->toBe(1);
     expect($configContent)->toContain("'driver' => 'mqtt'");
 });
+
+it('publishes a broadcasting config with a default connection on a fresh install', function () {
+    /** @var \PlayerCentral\MqttBroker\Tests\TestCase $this */
+    $envPath = base_path('.env');
+    $configPath = config_path('broadcasting.php');
+
+    File::put($envPath, "APP_NAME=Laravel\n");
+
+    if (File::exists($configPath)) {
+        File::delete($configPath);
+    }
+
+    $this->artisan('mqtt:install')->assertExitCode(0);
+
+    expect(File::exists($configPath))->toBeTrue();
+
+    $configContent = File::get($configPath);
+
+    expect($configContent)->toContain("'default' =>");
+    expect($configContent)->toContain("'mqtt' => [");
+});

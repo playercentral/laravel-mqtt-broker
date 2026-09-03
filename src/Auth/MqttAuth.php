@@ -29,6 +29,13 @@ class MqttAuth
     /**
      * Generate a signed stateless token containing user ID, expiration, and optional topic wildcards.
      *
+     * This is a broker-level auth primitive, distinct from generateSignature()/verifySignature()
+     * (which back the Laravel Echo private-channel auth flow via MqttBroadcaster::auth()). It is
+     * intended for authenticating direct MQTT client connections against a broker's HTTP auth/ACL
+     * webhook (e.g. EMQX, VerneMQ), scoping a connection to the given topic wildcards for its TTL.
+     * Not currently wired into any shipped auth flow — no broker webhook endpoint ships with this
+     * package yet; see the "Stateless Broker Tokens" section of the README.
+     *
      * @param  array<string>  $topics
      */
     public static function generateToken(int|string $userId, int $ttl = 3600, array $topics = [], ?string $key = null): string
@@ -49,6 +56,8 @@ class MqttAuth
 
     /**
      * Verify and decode a signed stateless token. Returns payload array if valid, or null if expired or invalid.
+     *
+     * See generateToken() for the intended broker-level auth use case.
      *
      * @return array<string, mixed>|null
      */

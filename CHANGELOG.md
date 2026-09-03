@@ -17,6 +17,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated Composer lockfile and ensured strict validation passes.
 - Updated GitHub Actions CI test command to ensure test stability.
 
+### Fixed
+
+- Fixed missing `default` broadcast connection in the publishable `broadcasting.php` config, which left fresh installs without a working default driver.
+- Fixed `MqttServiceProvider` re-parsing and re-merging the package config on every request even when Laravel's configuration cache is warm.
+- Removed unreachable dead-code branches in `MqttBroadcaster::auth()` and `normalizeChannelName()`.
+- Clarified `MqttAuth` stateless token API as a forward-looking primitive for future broker-level ACL webhook integration (documented, not yet wired), and corrected README notes that no longer matched the shipped private-channel auth support.
+- Pinned `static-analysis` and `code-style` CI jobs to `composer install` instead of `composer update`, so they use the locked dependency versions instead of always resolving the newest allowed release.
+
 ## [0.2.0] - 2026-04-25
 
 ### Added

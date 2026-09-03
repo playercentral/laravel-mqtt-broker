@@ -31,12 +31,7 @@ class MqttServiceProvider extends ServiceProvider
 
     public function register(): void
     {
-        $packageConfig = require __DIR__.'/config/broadcasting.php';
-        $config = $this->app->make('config');
-        $config->set(
-            'broadcasting',
-            array_replace_recursive($packageConfig, $config->get('broadcasting', []))
-        );
+        $this->replaceConfigRecursivelyFrom(__DIR__.'/config/broadcasting.php', 'broadcasting');
 
         $this->app->singleton(MqttClientFactoryInterface::class, PhpMqttClientFactory::class);
 

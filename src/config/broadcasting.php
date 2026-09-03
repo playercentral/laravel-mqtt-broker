@@ -13,6 +13,8 @@ return [
     |
     */
 
+    'default' => env('BROADCAST_CONNECTION', 'mqtt'),
+
     'connections' => [
         'mqtt' => [
             'driver' => 'mqtt',

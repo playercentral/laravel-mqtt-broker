@@ -81,7 +81,7 @@ class MqttBroadcaster extends Broadcaster
 
         $channelName = $this->normalizeChannelName($rawChannelName);
 
-        if ($rawChannelName === '' || ! $this->retrieveUser($request, $channelName)) {
+        if (! $this->retrieveUser($request, $channelName)) {
             throw new AccessDeniedHttpException();
         }
 
@@ -106,10 +106,6 @@ class MqttBroadcaster extends Broadcaster
     {
         if (str_starts_with($channel, 'private-')) {
             return substr($channel, 8);
-        }
-
-        if (str_starts_with($channel, 'presence-')) {
-            return substr($channel, 9);
         }
 
         return $channel;

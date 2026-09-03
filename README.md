@@ -245,19 +245,32 @@ Echo.channel('matches.1')
     });
 ```
 
+## Stateless Broker Tokens
+
+`PlayerCentral\MqttBroker\Auth\MqttAuth::generateToken()` / `verifyToken()` produce a
+short-lived, topic-scoped HMAC token (`sub`, `exp`, `topics`). This is a separate primitive
+from the private-channel signature above: it is meant for authenticating a client's direct
+connection to the MQTT broker itself (e.g. as the username/password checked by a broker's
+HTTP auth/ACL webhook, such as EMQX or VerneMQ), rather than a Laravel `broadcasting/auth`
+HTTP request.
+
+This package does not yet ship a broker webhook endpoint that consumes these tokens — the
+primitive is available for building your own integration ahead of that being added.
+
 ## Behavior Notes
 
 - Event payloads are published as JSON with this shape:
   - `event`: event name
   - `payload`: event payload array
 - Topic is derived from channel name, optionally prefixed with `MQTT_TOPIC_PREFIX`.
-- Private and presence channel auth is not currently supported by this package.
+- Private channel auth is supported via HMAC signature (see above). Presence channels are not
+  currently supported.
 
 ## Known Limitations
 
-This package is in its initial release (v0.1.0) and has some limitations:
-
-- **Private and Presence Channels**: Authentication for private and presence channels is not supported. Attempting to authenticate these channel types will result in an exception. This is due to the nature of MQTT's pub/sub model, which differs from traditional WebSocket broadcasting.
+- **Presence Channels**: Authentication for presence channels is not supported. Attempting to
+  authenticate a presence channel will result in an exception. This is due to the nature of
+  MQTT's pub/sub model, which differs from traditional WebSocket broadcasting.
 
 If your application requires this feature, consider using alternative broadcasting drivers or contributing to extend this package.
 
