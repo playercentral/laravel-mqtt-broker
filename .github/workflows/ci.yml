@@ -57,7 +57,7 @@ jobs:
           tools: composer:v2
 
       - name: Install dependencies
-        run: composer update --prefer-dist --no-interaction --no-progress
+        run: composer install --prefer-dist --no-interaction --no-progress
 
       - name: Run PHPStan
         run: vendor/bin/phpstan analyse
@@ -78,7 +78,7 @@ jobs:
           tools: composer:v2
 
       - name: Install dependencies
-        run: composer update --prefer-dist --no-interaction --no-progress
+        run: composer install --prefer-dist --no-interaction --no-progress
 
       - name: Check formatting
         run: vendor/bin/pint --test
